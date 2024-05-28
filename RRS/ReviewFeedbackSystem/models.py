@@ -47,6 +47,6 @@ class Bewertung(models.Model):
 
     bewertung = models.PositiveSmallIntegerField(choices=BEWERTUNG_CHOICES, default=3)
     kommentar = models.TextField()
-    erstellt_am = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return f"Bewertung: {self.bewertung}"
