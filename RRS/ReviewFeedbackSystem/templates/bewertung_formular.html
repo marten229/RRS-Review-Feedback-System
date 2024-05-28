@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Bewertung abgeben</title>
+</head>
+<body>
+    <h1>Bewertung abgeben</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_bewertung">Bewertung:</label><br>
+        {{ form.bewertung }}<br><br>
+        <label for="id_kommentar">Kommentar:</label><br>
+        {{ form.kommentar }}<br><br>
+        <button type="submit">Bewertung absenden</button>
+    </form>
+</body>
+</html>

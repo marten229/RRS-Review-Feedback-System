@@ -35,4 +35,18 @@ class Reservation(models.Model):
     def __str__(self):
         return f"{self.name} - {self.datum} at {self.uhrzeit}"
     
-    ##Bewerung
+    ##Bewerungclass Bewertung(models.Model):
+class Bewertung(models.Model):
+    BEWERTUNG_CHOICES = (
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+    )
+
+    bewertung = models.PositiveSmallIntegerField(choices=BEWERTUNG_CHOICES, default=3)
+    kommentar = models.TextField()
+    erstellt_am = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"Bewertung: {self.bewertung}"
