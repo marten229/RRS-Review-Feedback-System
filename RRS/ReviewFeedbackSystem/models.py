@@ -47,6 +47,6 @@ class Bewertung(models.Model):
 
     bewertung = models.PositiveSmallIntegerField(choices=BEWERTUNG_CHOICES, default=3)
     kommentar = models.TextField()
-
+    
     def __str__(self):
         return f"Bewertung: {self.bewertung}"
