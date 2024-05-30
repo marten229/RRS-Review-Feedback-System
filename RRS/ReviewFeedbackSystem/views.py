@@ -76,7 +76,7 @@ def bewertung_abgeben(request, pk):
             bewertung.restaurant = restaurant
             bewertung.user = dummy_user
             bewertung.save()
-            return redirect('danke', pk=pk)  # Hier übergeben wir den `pk`-Parameter korrekt
+            return redirect('danke', pk=pk)
     else:
         form = BewertungForm()
     return render(request, 'bewertung_formular.html', {'form': form, 'restaurant': restaurant})
@@ -84,3 +84,8 @@ def bewertung_abgeben(request, pk):
 def danke(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
     return render(request, 'danke.html', {'restaurant': restaurant, 'restaurant_pk': pk})
+
+def bewertung_loeschen(request, bewertung_id):
+    bewertung = get_object_or_404(Bewertung, id=bewertung_id)
+    bewertung.delete()
+    return redirect('bewertungen_anzeigen')

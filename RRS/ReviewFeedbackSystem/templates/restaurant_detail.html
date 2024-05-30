@@ -11,6 +11,9 @@
     <p>{{ restaurant.email }}</p>
     <p>{{ restaurant.website }}</p>
     <p>{{ restaurant.öffnungszeiten }}</p>
+    
+   
+
     <!-- Button zum Anlegen einer Reservierung oder eine Bewertung -->
     <a href="{% url 'create-reservation' restaurant.pk %}">Reservierung anlegen</a>
     <a href="{% url 'create-bewertung' restaurant.pk %}">Bewertung abgeben</a>

@@ -10,15 +10,38 @@ class ReservationForm(forms.ModelForm):
 # Bewertung formular
 
 class BewertungForm(forms.ModelForm):
-    bewertung = forms.ChoiceField(label='Bewertung', choices=[
-        ('5', '1'),
-        ('4', '2'),
-        ('3', '3'),
-        ('2', '4'),
-        ('1', '5')
-    ], widget=forms.RadioSelect)
-    kommentar = forms.CharField(label='Kommentar', widget=forms.Textarea(attrs={'rows': 5, 'cols': 40}))
-    
+    bewertung = forms.CharField(
+        label='Wie würden Sie Ihre Erfahrung bewerten?',
+        widget=forms.HiddenInput()
+    )
+    mit_wem = forms.ChoiceField(
+        label='Mit wem waren Sie hier?',
+        choices=[
+            ('geschäftsreise', 'Geschäftsreise'),
+            ('als_paar', 'Als Paar'),
+            ('familie', 'Familie'),
+            ('mit_freunden', 'Mit Freunden'),
+            ('alleine', 'Alleine')
+        ],
+        widget=forms.RadioSelect
+    )
+    anlass = forms.ChoiceField(
+        label='Was war der Anlass Ihres Besuchs?',
+        choices=[
+            ('frühstück', 'Frühstück'),
+            ('brunch', 'Brunch'),
+            ('mittagessen', 'Mittagessen'),
+            ('abendessen', 'Abendessen'),
+            ('dessert', 'Dessert'),
+            ('kaffee_oder_tee', 'Kaffee oder Tee')
+        ],
+        widget=forms.Select
+    )
+    kommentar = forms.CharField(
+        label='Bewertung',
+        widget=forms.Textarea(attrs={'rows': 5, 'cols': 40, 'placeholder': 'Bewertungstipps'})
+    )
+
     class Meta:
         model = Bewertung
-        fields = ['bewertung', 'kommentar']
+        fields = ['bewertung', 'mit_wem', 'anlass', 'kommentar']
