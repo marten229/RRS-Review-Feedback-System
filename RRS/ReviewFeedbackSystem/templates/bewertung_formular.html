@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Bewertung abgeben</title>
-     <style>
+    <style>
         body {
             font-family: Arial, sans-serif;
             display: flex;
@@ -18,7 +18,6 @@
         }
         .image-section, .form-section {
             padding: 20px;
-            
         }
         .image-section img {
             width: 100%;
@@ -39,12 +38,10 @@
         .form-section label {
             font-weight: bold;
             margin-top: 25px;
-           
-           
         }
         .form-section input, .form-section textarea, .form-section select {
             width: 100%;
-            padding:10px;
+            padding: 10px;
             margin-top: 20px;
             margin-bottom: 50px;
             border: 1px solid #ccc;
@@ -61,17 +58,14 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            background: white url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgMTYuNzNsLTcuMi03LjJMMTIgMy41bDcuMiA2LjktNy4yIDcuMnoiLz48L3N2Zz4=') no-repeat right 10px center;
+            background: white url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgMTYuNzNsLTcuMi03LjJMMTIgMy41bDcuMiA2LjktNy4yIDcuMnoiLz48L3N2Zz4=') no-repeat right 10px center;
             background-size: 12px;
             padding-right: 30px;
-         
-            
         }
         .radio-group, .rating-group {
             display: flex;
             justify-content: space-between;
             align-items: center;
-        
         }
         .radio-group label {
             flex: 1;
@@ -83,18 +77,13 @@
             cursor: pointer;
             transition: background-color 0.3s, border-color 0.3s;
             width: 110px;
-
-            
         }
         .radio-group input[type="radio"] {
             display: none;
-            
-           
         }
         .radio-group input[type="radio"]:checked + label {
             background-color: #fff;
             border: 2px solid green;
-            
         }
         .star-rating {
             direction: rtl;
@@ -129,8 +118,6 @@
         .submit-button:hover {
             background-color: #45a049;
         }
-        
-       
     </style>
 </head>
 <body>
@@ -141,11 +128,10 @@
         </div>
         <div class="form-section">
             <h1>Bewertung abgeben</h1>
-            <form method="post">
+            <form id="bewertungForm" method="post" action="{% url 'create-bewertung' restaurant.pk %}">
                 {% csrf_token %}
-       
                 <div>
-                    <label for="id_bewertung"  style="font-size: 18px;">Wie würden Sie Ihre Erfahrung bewerten?</label><br>
+                    <label for="id_bewertung" style="font-size: 18px;">Wie würden Sie Ihre Erfahrung bewerten?</label><br>
                     <div class="star-rating">
                         <input type="radio" id="5-stars" name="bewertung" value="5"><label for="5-stars" class="star">&#9733;</label>
                         <input type="radio" id="4-stars" name="bewertung" value="4"><label for="4-stars" class="star">&#9733;</label>
@@ -153,27 +139,57 @@
                         <input type="radio" id="2-stars" name="bewertung" value="2"><label for="2-stars" class="star">&#9733;</label>
                         <input type="radio" id="1-star" name="bewertung" value="1"><label for="1-star" class="star">&#9733;</label>
                     </div>
+                    <input type="hidden" name="bewertung" id="bewertungValue">
                 </div>
                 <div>
                     <label for="id_mit_wem" style="font-size: 18px;">Mit wem waren Sie hier?</label><br>
                     <div class="radio-group">
-                        {% for radio in form.mit_wem %}
-                            <input type="radio" id="{{ radio.id_for_label }}" name="mit_wem" value="{{ radio.choice_value }}">
-                            <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
-                        {% endfor %}
+                        <input type="radio" id="geschäftsreise" name="mit_wem" value="geschäftsreise"><label for="geschäftsreise">Geschäftsreise</label>
+                        <input type="radio" id="als_paar" name="mit_wem" value="als_paar"><label for="als_paar">Als Paar</label>
+                        <input type="radio" id="familie" name="mit_wem" value="familie"><label for="familie">Familie</label>
+                        <input type="radio" id="mit_freunden" name="mit_wem" value="mit_freunden"><label for="mit_freunden">Mit Freunden</label>
+                        <input type="radio" id="alleine" name="mit_wem" value="alleine"><label for="alleine">Alleine</label>
                     </div>
                 </div>
                 <div>
                     <label for="id_anlass" style="font-size: 18px;">Was war der Anlass Ihres Besuchs?</label><br>
-                    {{ form.anlass }}
+                    <select name="anlass">
+                        <option value="frühstück">Frühstück</option>
+                        <option value="brunch">Brunch</option>
+                        <option value="mittagessen">Mittagessen</option>
+                        <option value="abendessen">Abendessen</option>
+                        <option value="dessert">Dessert</option>
+                        <option value="kaffee_oder_tee">Kaffee oder Tee</option>
+                    </select>
                 </div>
                 <div>
                     <label for="id_kommentar" style="font-size: 18px;">Bewertung</label><br>
-                    {{ form.kommentar }}
+                    <textarea name="kommentar" rows="5" cols="40" placeholder="Bewertungstipps"></textarea>
                 </div>
-                <a href="{% url 'danke' restaurant.pk %}"><button type="submit" class="submit-button">Bewertung absenden</button></a>
+                <button type="submit" class="submit-button">Bewertung absenden</button>
             </form>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const starRatingInputs = document.querySelectorAll('.star-rating input[type="radio"]');
+            const bewertungValue = document.getElementById('bewertungValue');
+            const bewertungForm = document.getElementById('bewertungForm');
+
+            starRatingInputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    bewertungValue.value = input.value;
+                });
+            });
+
+            bewertungForm.addEventListener('submit', (event) => {
+                const checkedStar = document.querySelector('.star-rating input[type="radio"]:checked');
+                if (!checkedStar) {
+                    event.preventDefault();
+                    alert('Bitte bewerten Sie Ihre Erfahrung.');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

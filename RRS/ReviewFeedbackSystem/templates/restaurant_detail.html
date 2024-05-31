@@ -18,5 +18,20 @@
     <a href="{% url 'create-reservation' restaurant.pk %}">Reservierung anlegen</a>
     <a href="{% url 'create-bewertung' restaurant.pk %}">Bewertung abgeben</a>
     <a href="{% url 'restaurant-list' %}">Zurück zur Übersicht</a>
+    <div class="bewertungen-section">
+        <h2>Bewertungen</h2>
+        <div id="bewertungen-container">
+            {% for bewertung in bewertungen %}
+                <div>
+                    <strong>{{ bewertung.bewertung }} Sterne</strong>
+                    <p>{{ bewertung.kommentar }}</p>
+                    <small>{{ bewertung.created_at }}</small>
+                </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'restaurant-bewertungen' restaurant.pk %}">Alle Bewertungen anzeigen</a>
+    </div>
+    
+</div>
 </body>
 </html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bewertungen für {{ restaurant.name }}</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Bewertungen für {{ restaurant.name }}</h1>
+        <div class="bewertungen-section">
+            {% if bewertungen %}
+                {% for bewertung in bewertungen %}
+                    <div>
+                        <strong>{{ bewertung.bewertung }} Sterne</strong>
+                        <p>Mit wem: {{ bewertung.get_mit_wem_display }}</p>
+                        <p>Anlass: {{ bewertung.get_anlass_display }}</p>
+                        <p>{{ bewertung.kommentar }}</p>
+                        <small>{{ bewertung.created_at }}</small>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Es gibt noch keine Bewertungen für dieses Restaurant.</p>
+            {% endif %}
+        </div>
+        <a href="{% url 'restaurant-detail' restaurant.pk %}">Zurück zum Restaurant</a>
+    </div>
+</body>
+</html>
