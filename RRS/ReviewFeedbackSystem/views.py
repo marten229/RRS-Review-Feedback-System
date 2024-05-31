@@ -46,26 +46,10 @@ def create_reservation(request, pk):
         form = ReservationForm()
     return render(request, 'create_reservation.html', {'form': form, 'restaurant': restaurant})
 
-#bewertung abgeben#
-def bewertung_abgeben(request):
-    if request.method == 'POST':
-        form = BewertungForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('danke')
-    else:
-        form = BewertungForm()
-    return render(request, 'bewertung_formular.html', {'form': form})
 
-def danke(request):
-    return render(request, 'danke.html')
 
-## bewertungen anzeigen 
 
-def bewertungen_anzeigen(request):
-    bewertungen = Bewertung.objects.all()
-    return render(request, 'bewertungen_anzeigen.html', {'bewertungen': bewertungen})
-
+##bewertun abgeben
 def bewertung_abgeben(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
     dummy_user, created = User.objects.get_or_create(username='dummy_user', defaults={'email': 'dummy@example.com', 'password': 'dummy_password'})
@@ -85,7 +69,3 @@ def danke(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
     return render(request, 'danke.html', {'restaurant': restaurant, 'restaurant_pk': pk})
 
-def bewertung_loeschen(request, bewertung_id):
-    bewertung = get_object_or_404(Bewertung, id=bewertung_id)
-    bewertung.delete()
-    return redirect('bewertungen_anzeigen')

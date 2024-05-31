@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Bewertung abgeben</title>
-    <style>
+     <style>
         body {
             font-family: Arial, sans-serif;
             display: flex;
@@ -30,7 +30,7 @@
         }
         .form-section h1 {
             font-size: 35px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
         .form-section form {
             display: flex;
@@ -38,13 +38,15 @@
         }
         .form-section label {
             font-weight: bold;
-            margin-top: 10px;
+            margin-top: 25px;
+           
+           
         }
         .form-section input, .form-section textarea, .form-section select {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 20px;
+            padding:10px;
+            margin-top: 20px;
+            margin-bottom: 50px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
@@ -53,7 +55,7 @@
         }
         .form-section select {
             width: auto;
-            padding: 5px 20px;
+            padding: 15px;
             border-radius: 20px;
             border: 1px solid #ccc;
             -webkit-appearance: none;
@@ -62,31 +64,37 @@
             background: white url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgMTYuNzNsLTcuMi03LjJMMTIgMy41bDcuMiA2LjktNy4yIDcuMnoiLz48L3N2Zz4=') no-repeat right 10px center;
             background-size: 12px;
             padding-right: 30px;
+         
             
         }
         .radio-group, .rating-group {
             display: flex;
             justify-content: space-between;
             align-items: center;
+        
         }
         .radio-group label {
             flex: 1;
             text-align: center;
-            margin-right: 10px;
-            padding: 10px;
+            margin: 10px;
+            padding: 15px;
             border: 1px solid #ccc;
             border-radius: 20px;
             cursor: pointer;
             transition: background-color 0.3s, border-color 0.3s;
             width: 110px;
+
+            
         }
         .radio-group input[type="radio"] {
             display: none;
+            
            
         }
         .radio-group input[type="radio"]:checked + label {
             background-color: #fff;
-            border: 1px solid #000;
+            border: 2px solid green;
+            
         }
         .star-rating {
             direction: rtl;
@@ -106,7 +114,7 @@
         .star-rating label:hover,
         .star-rating label:hover ~ label,
         .star-rating input[type="radio"]:checked ~ label {
-            color: #f2b600;
+            color: green;
         }
         .submit-button {
             background-color: #4CAF50;
@@ -121,6 +129,8 @@
         .submit-button:hover {
             background-color: #45a049;
         }
+        
+       
     </style>
 </head>
 <body>
@@ -135,7 +145,7 @@
                 {% csrf_token %}
        
                 <div>
-                    <label for="id_bewertung">Wie würden Sie Ihre Erfahrung bewerten?</label><br>
+                    <label for="id_bewertung"  style="font-size: 18px;">Wie würden Sie Ihre Erfahrung bewerten?</label><br>
                     <div class="star-rating">
                         <input type="radio" id="5-stars" name="bewertung" value="5"><label for="5-stars" class="star">&#9733;</label>
                         <input type="radio" id="4-stars" name="bewertung" value="4"><label for="4-stars" class="star">&#9733;</label>
@@ -145,7 +155,7 @@
                     </div>
                 </div>
                 <div>
-                    <label for="id_mit_wem">Mit wem waren Sie hier?</label><br>
+                    <label for="id_mit_wem" style="font-size: 18px;">Mit wem waren Sie hier?</label><br>
                     <div class="radio-group">
                         {% for radio in form.mit_wem %}
                             <input type="radio" id="{{ radio.id_for_label }}" name="mit_wem" value="{{ radio.choice_value }}">
@@ -154,14 +164,14 @@
                     </div>
                 </div>
                 <div>
-                    <label for="id_anlass">Was war der Anlass Ihres Besuchs?</label><br>
+                    <label for="id_anlass" style="font-size: 18px;">Was war der Anlass Ihres Besuchs?</label><br>
                     {{ form.anlass }}
                 </div>
                 <div>
-                    <label for="id_kommentar">Bewertung</label><br>
+                    <label for="id_kommentar" style="font-size: 18px;">Bewertung</label><br>
                     {{ form.kommentar }}
                 </div>
-                <button type="submit" class="submit-button">Bewertung absenden</button>
+                <a href="{% url 'danke' restaurant.pk %}"><button type="submit" class="submit-button">Bewertung absenden</button></a>
             </form>
         </div>
     </div>
