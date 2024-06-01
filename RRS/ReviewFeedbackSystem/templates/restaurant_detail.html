@@ -1,37 +1,193 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
+    <meta charset="UTF-8">
     <title>{{ restaurant.name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .restaurant-info p {
+            margin: 0;
+            padding: 5px 0;
+        }
+        .restaurant-info a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .restaurant-info a:hover {
+            text-decoration: underline;
+        }
+        .bewertungen-section {
+            margin-top: 40px;
+        }
+        .bewertungen-section h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .star-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .star-rating .star {
+            color: #FFD700;
+            font-size: 25px;
+        }
+        .rating-value {
+            margin-left: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+        }
+        .review-count {
+            margin-left: 10px;
+            font-size: 18px;
+            color: #555;
+        }
+        .review-item {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .review-item .user-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .review-item .review-stars {
+            display: flex;
+            align-items: center;
+        }
+        .review-item .review-stars .star {
+            color: #FFD700;
+            font-size: 16px;
+        }
+        .review-item .review-stars .star.grey {
+            color: #ccc;
+        }
+        .review-item p {
+            margin: 10px 0;
+            color: #333;
+        }
+        .review-item small {
+            color: #888;
+        }
+        .hidden {
+            display: none;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #218838;
+        }
+    </style>
+    <script>
+        function toggleReviews() {
+            var hiddenReviews = document.getElementById("hidden-reviews");
+            var toggleButton = document.getElementById("toggle-reviews-btn");
+            if (hiddenReviews.classList.contains("hidden")) {
+                hiddenReviews.classList.remove("hidden");
+                toggleButton.innerText = "Weniger anzeigen";
+            } else {
+                hiddenReviews.classList.add("hidden");
+                toggleButton.innerText = "Mehr anzeigen";
+            }
+        }
+    </script>
 </head>
 <body>
-    <h1>{{ restaurant.name }}</h1>
-    <p>{{ restaurant.beschreibung }}</p>
-    <p>{{ restaurant.adresse }}</p>
-    <p>{{ restaurant.telefon_nummer }}</p>
-    <p>{{ restaurant.email }}</p>
-    <p>{{ restaurant.website }}</p>
-    <p>{{ restaurant.öffnungszeiten }}</p>
-    
-   
-
-    <!-- Button zum Anlegen einer Reservierung oder eine Bewertung -->
-    <a href="{% url 'create-reservation' restaurant.pk %}">Reservierung anlegen</a>
-    <a href="{% url 'create-bewertung' restaurant.pk %}">Bewertung abgeben</a>
-    <a href="{% url 'restaurant-list' %}">Zurück zur Übersicht</a>
-    <div class="bewertungen-section">
-        <h2>Bewertungen</h2>
-        <div id="bewertungen-container">
-            {% for bewertung in bewertungen %}
-                <div>
-                    <strong>{{ bewertung.bewertung }} Sterne</strong>
-                    <p>{{ bewertung.kommentar }}</p>
-                    <small>{{ bewertung.created_at }}</small>
-                </div>
-            {% endfor %}
+    <div class="container">
+        <h1>{{ restaurant.name }}</h1>
+        <div class="restaurant-info">
+            <p>{{ restaurant.beschreibung }}</p>
+            <p>{{ restaurant.adresse }}</p>
+            <p>{{ restaurant.telefon_nummer }}</p>
+            <p>{{ restaurant.email }}</p>
+            <p><a href="{{ restaurant.website }}" target="_blank">{{ restaurant.website }}</a></p>
+            <p>{{ restaurant.öffnungszeiten }}</p>
+            <p>
+                <a href="{% url 'create-reservation' restaurant.pk %}">Reservierung anlegen</a> |
+                <a href="{% url 'create-bewertung' restaurant.pk %}">Bewertung abgeben</a> |
+                <a href="{% url 'restaurant-list' %}">Zurück zur Übersicht</a>
+            </p>
         </div>
-        <a href="{% url 'restaurant-bewertungen' restaurant.pk %}">Alle Bewertungen anzeigen</a>
+
+        <div class="bewertungen-section">
+            <h2>Bewertungen</h2>
+            <div class="star-rating">
+                {% for filled in sterne_bewertung %}
+                    {% if filled %}
+                        <span class="star">&#9733;</span>
+                    {% else %}
+                        <span class="star">&#9734;</span>
+                    {% endif %}
+                {% endfor %}
+                <span class="rating-value">{{ durchschnittliche_bewertung|floatformat:1 }}</span>
+                <span class="review-count">({{ anzahl_bewertungen }} Bewertungen)</span>
+            </div>
+
+            <div id="bewertungen-container">
+                {% for bewertung in bewertungen|slice:":3" %}
+                    <div class="review-item">
+                        <div class="user-name">{{ bewertung.user.username }}</div>
+                        <div class="review-stars">
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung %}
+                                    <span class="star">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                            <span>{{ bewertung.bewertung }} Sterne</span>
+                        </div>
+                        <p>{{ bewertung.kommentar }}</p>
+                        <small>{{ bewertung.created_at }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+            <div id="hidden-reviews" class="hidden">
+                {% for bewertung in bewertungen|slice:"3:" %}
+                    <div class="review-item">
+                        <div class="user-name">{{ bewertung.user.username }}</div>
+                        <div class="review-stars">
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung %}
+                                    <span class="star">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                            <span>{{ bewertung.bewertung }} Sterne</span>
+                        </div>
+                        <p>{{ bewertung.kommentar }}</p>
+                        <small>{{ bewertung.created_at }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+            <button id="toggle-reviews-btn" class="btn" onclick="toggleReviews()">Mehr anzeigen</button>
+        </div>
     </div>
-    
-</div>
 </body>
 </html>

@@ -61,7 +61,9 @@ class Bewertung(models.Model):
         ('dessert', 'Dessert'),
         ('kaffee_oder_tee', 'Kaffee oder Tee'),
     )
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='bewertungen', default=1)
+
+    restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE, related_name='bewertungen')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bewertungen' , default=1)
     bewertung = models.PositiveSmallIntegerField(choices=BEWERTUNG_CHOICES, default=3)
     mit_wem = models.CharField(max_length=20, choices=MIT_WEM_CHOICES)
     anlass = models.CharField(max_length=20, choices=ANLASS_CHOICES)

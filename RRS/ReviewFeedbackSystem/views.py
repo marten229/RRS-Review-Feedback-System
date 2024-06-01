@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Avg, Count
 from django.views.generic import ListView, DetailView
 from .models import Restaurant, User
 from .forms import ReservationForm, BewertungForm
@@ -30,6 +31,23 @@ class RestaurantDetailView(DetailView):
     def get_object(self):
         restaurant_id = self.kwargs.get('pk')
         return Restaurant.objects.get(pk=restaurant_id)
+    
+    ##durchnitt aller bewertungen
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        restaurant = self.get_object()
+        bewertungen = Bewertung.objects.filter(restaurant=restaurant)
+        durchschnittliche_bewertung = bewertungen.aggregate(Avg('bewertung'))['bewertung__avg'] or 0
+        anzahl_bewertungen = bewertungen.aggregate(Count('bewertung'))['bewertung__count']
+        
+        # Erstellen einer Liste von Sternen (gefüllt oder leer) basierend auf der durchschnittlichen Bewertung
+        context['sterne_bewertung'] = [i <= durchschnittliche_bewertung for i in range(1, 6)]
+        context['durchschnittliche_bewertung'] = durchschnittliche_bewertung
+        context['anzahl_bewertungen'] = anzahl_bewertungen
+        context['bewertungen'] = bewertungen
+
+        
+        return context
 
 def create_reservation(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
@@ -77,5 +95,23 @@ from .models import Restaurant, Bewertung
 def restaurant_bewertungen(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
     bewertungen = Bewertung.objects.filter(restaurant=restaurant)
-    return render(request, 'restaurant_bewertungen.html', {'restaurant': restaurant, 'bewertungen': bewertungen})
+    durchschnittliche_bewertung = bewertungen.aggregate(Avg('bewertung'))['bewertung__avg'] or 0
+    anzahl_bewertungen = bewertungen.aggregate(Count('bewertung'))['bewertung__count']
+    
+    # Erstellen einer Liste von Sternen (gefüllt oder leer) basierend auf der durchschnittlichen Bewertung
+    sterne_bewertung = [i <= durchschnittliche_bewertung for i in range(1, 6)]
+    
+    return render(request, 'restaurant_bewertungen.html', {
+        'restaurant': restaurant,
+        'bewertungen': bewertungen,
+        'durchschnittliche_bewertung': durchschnittliche_bewertung,
+        'anzahl_bewertungen': anzahl_bewertungen,
+        'sterne_bewertung': sterne_bewertung
+    })
+
+def delete_bewertung(request, bewertung_id):
+    bewertung = get_object_or_404(Bewertung, id=bewertung_id)
+    restaurant_id = bewertung.restaurant.id
+    bewertung.delete()
+    return redirect('restaurant-bewertungen', pk=restaurant_id)
 
