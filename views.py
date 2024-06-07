@@ -1,14 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Avg, Count
 from django.views.generic import ListView, DetailView
-from .models import Restaurant, User
+from .models import Restaurant, User, Bewertung
 from .forms import ReservationForm, BewertungForm
-from .models import Bewertung
 
-# View für die Übersicht aller Restaurants
 class RestaurantListView(ListView):
     model = Restaurant
-    template_name = 'restaurant_list.html'  # Pfad zur Template-Datei für die Übersicht
+    template_name = 'restaurant_list.html'
     context_object_name = 'restaurants'
 
     def get_queryset(self):
@@ -16,36 +14,36 @@ class RestaurantListView(ListView):
 
 class RestaurantDetailView(DetailView):
     model = Restaurant
-    template_name = 'restaurant_detail.html'  # Pfad zur Template-Datei für die Detailansicht
+    template_name = 'restaurant_detail.html'
     context_object_name = 'restaurant'
 
     def get_object(self):
         restaurant_id = self.kwargs.get('pk')
-        return Restaurant.objects.get(pk=restaurant_id)
+        return get_object_or_404(Restaurant, pk=restaurant_id)
     
-class RestaurantDetailView(DetailView):
-    model = Restaurant
-    template_name = 'restaurant_detail.html'  # Pfad zur Template-Datei für die Detailansicht
-    context_object_name = 'restaurant'
-
-    def get_object(self):
-        restaurant_id = self.kwargs.get('pk')
-        return Restaurant.objects.get(pk=restaurant_id)
-    
-    ##durchnitt aller bewertungen
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         restaurant = self.get_object()
         bewertungen = Bewertung.objects.filter(restaurant=restaurant)
-        durchschnittliche_bewertung = bewertungen.aggregate(Avg('bewertung'))['bewertung__avg'] or 0
-        anzahl_bewertungen = bewertungen.aggregate(Count('bewertung'))['bewertung__count']
         
-        # Erstellen einer Liste von Sternen (gefüllt oder leer) basierend auf der durchschnittlichen Bewertung
-        context['sterne_bewertung'] = [i <= durchschnittliche_bewertung for i in range(1, 6)]
-        context['durchschnittliche_bewertung'] = durchschnittliche_bewertung
-        context['anzahl_bewertungen'] = anzahl_bewertungen
-        context['bewertungen'] = bewertungen
+        # Berechnen Sie die durchschnittliche Bewertung für jedes Kriterium
+        durchschnittliche_bewertung_gesamt = bewertungen.aggregate(Avg('bewertung_gesamt'))['bewertung_gesamt__avg'] or 0
+        durchschnittliche_bewertung_service = bewertungen.aggregate(Avg('bewertung_service'))['bewertung_service__avg'] or 0
+        durchschnittliche_bewertung_essen = bewertungen.aggregate(Avg('bewertung_essen'))['bewertung_essen__avg'] or 0
+        durchschnittliche_bewertung_ambiente = bewertungen.aggregate(Avg('bewertung_ambiente'))['bewertung_ambiente__avg'] or 0
+        anzahl_bewertungen = bewertungen.count()
 
+        volle_sterne = int(durchschnittliche_bewertung_gesamt)
+        halber_stern = durchschnittliche_bewertung_gesamt - volle_sterne >= 0.5
+        
+        context['durchschnittliche_bewertung_gesamt'] = durchschnittliche_bewertung_gesamt
+        context['durchschnittliche_bewertung_service'] = durchschnittliche_bewertung_service
+        context['durchschnittliche_bewertung_essen'] = durchschnittliche_bewertung_essen
+        context['durchschnittliche_bewertung_ambiente'] = durchschnittliche_bewertung_ambiente
+        context['anzahl_bewertungen'] = anzahl_bewertungen
+        context['volle_sterne'] = volle_sterne
+        context['halber_stern'] = halber_stern
+        context['bewertungen'] = bewertungen
         
         return context
 
@@ -64,17 +62,15 @@ def create_reservation(request, pk):
         form = ReservationForm()
     return render(request, 'create_reservation.html', {'form': form, 'restaurant': restaurant})
 
-
-
-
-##bewertun abgeben
 def bewertung_abgeben(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
+    dummy_user, created = User.objects.get_or_create(username='dummy_user', defaults={'email': 'dummy@example.com', 'password': 'dummy_password'})
     if request.method == 'POST':
         form = BewertungForm(request.POST)
         if form.is_valid():
             bewertung = form.save(commit=False)
             bewertung.restaurant = restaurant
+            bewertung.user = dummy_user  # Dummy-Benutzer zuweisen
             bewertung.save()
             return redirect('danke', pk=pk)
         else:
@@ -87,26 +83,29 @@ def danke(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
     return render(request, 'danke.html', {'restaurant': restaurant, 'restaurant_pk': pk})
 
-
-
-from django.shortcuts import render, get_object_or_404
-from .models import Restaurant, Bewertung
-
 def restaurant_bewertungen(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
     bewertungen = Bewertung.objects.filter(restaurant=restaurant)
-    durchschnittliche_bewertung = bewertungen.aggregate(Avg('bewertung'))['bewertung__avg'] or 0
-    anzahl_bewertungen = bewertungen.aggregate(Count('bewertung'))['bewertung__count']
     
-    # Erstellen einer Liste von Sternen (gefüllt oder leer) basierend auf der durchschnittlichen Bewertung
-    sterne_bewertung = [i <= durchschnittliche_bewertung for i in range(1, 6)]
+    durchschnittliche_bewertung_gesamt = bewertungen.aggregate(Avg('bewertung_gesamt'))['bewertung_gesamt__avg'] or 0
+    durchschnittliche_bewertung_service = bewertungen.aggregate(Avg('bewertung_service'))['bewertung_service__avg'] or 0
+    durchschnittliche_bewertung_essen = bewertungen.aggregate(Avg('bewertung_essen'))['bewertung_essen__avg'] or 0
+    durchschnittliche_bewertung_ambiente = bewertungen.aggregate(Avg('bewertung_ambiente'))['bewertung_ambiente__avg'] or 0
+    anzahl_bewertungen = bewertungen.count()
+
+    volle_sterne = int(durchschnittliche_bewertung_gesamt)
+    halber_stern = durchschnittliche_bewertung_gesamt - volle_sterne >= 0.5
     
     return render(request, 'restaurant_bewertungen.html', {
         'restaurant': restaurant,
         'bewertungen': bewertungen,
-        'durchschnittliche_bewertung': durchschnittliche_bewertung,
+        'durchschnittliche_bewertung_gesamt': durchschnittliche_bewertung_gesamt,
+        'durchschnittliche_bewertung_service': durchschnittliche_bewertung_service,
+        'durchschnittliche_bewertung_essen': durchschnittliche_bewertung_essen,
+        'durchschnittliche_bewertung_ambiente': durchschnittliche_bewertung_ambiente,
         'anzahl_bewertungen': anzahl_bewertungen,
-        'sterne_bewertung': sterne_bewertung
+        'volle_sterne': volle_sterne,
+        'halber_stern': halber_stern
     })
 
 def delete_bewertung(request, bewertung_id):

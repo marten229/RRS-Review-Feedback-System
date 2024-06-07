@@ -16,8 +16,10 @@
             max-width: 1200px;
             width: 100%;
         }
-        .image-section, .form-section {
+        .image-section {
             padding: 20px;
+            flex: 1;
+            max-width: 300px;
         }
         .image-section img {
             width: 100%;
@@ -25,7 +27,8 @@
             border-radius: 8px;
         }
         .form-section {
-            flex: 1;
+            padding: 20px;
+            flex: 3;
         }
         .form-section h1 {
             font-size: 35px;
@@ -83,7 +86,7 @@
         }
         .star-rating label {
             color: #bbb;
-            font-size: 70px;
+            font-size: 50px;
             padding: 0;
             cursor: pointer;
             transition: all 0.3s ease-in-out;
@@ -119,15 +122,44 @@
             <form id="bewertungForm" method="post" action="{% url 'create-bewertung' restaurant.pk %}">
                 {% csrf_token %}
                 <div>
-                    <label for="id_bewertung" style="font-size: 18px;">Wie würden Sie Ihre Erfahrung bewerten?</label><br>
+                    <label for="id_bewertung_gesamt" style="font-size: 18px;">Gesamterlebnis</label><br>
                     <div class="star-rating">
-                        <input type="radio" id="5-stars" name="bewertung" value="5"><label for="5-stars" class="star">&#9733;</label>
-                        <input type="radio" id="4-stars" name="bewertung" value="4"><label for="4-stars" class="star">&#9733;</label>
-                        <input type="radio" id="3-stars" name="bewertung" value="3"><label for="3-stars" class="star">&#9733;</label>
-                        <input type="radio" id="2-stars" name="bewertung" value="2"><label for="2-stars" class="star">&#9733;</label>
-                        <input type="radio" id="1-star" name="bewertung" value="1"><label for="1-star" class="star">&#9733;</label>
+                        <input type="radio" id="overall-5-stars" name="bewertung_gesamt" value="5"><label for="overall-5-stars" class="star">&#9733;</label>
+                        <input type="radio" id="overall-4-stars" name="bewertung_gesamt" value="4"><label for="overall-4-stars" class="star">&#9733;</label>
+                        <input type="radio" id="overall-3-stars" name="bewertung_gesamt" value="3"><label for="overall-3-stars" class="star">&#9733;</label>
+                        <input type="radio" id="overall-2-stars" name="bewertung_gesamt" value="2"><label for="overall-2-stars" class="star">&#9733;</label>
+                        <input type="radio" id="overall-1-star" name="bewertung_gesamt" value="1"><label for="overall-1-star" class="star">&#9733;</label>
                     </div>
-                    <input type="hidden" name="bewertung" id="bewertungValue">
+                </div>
+                <div>
+                    <label for="id_bewertung_service" style="font-size: 18px;">Service</label><br>
+                    <div class="star-rating">
+                        <input type="radio" id="service-5-stars" name="bewertung_service" value="5"><label for="service-5-stars" class="star">&#9733;</label>
+                        <input type="radio" id="service-4-stars" name="bewertung_service" value="4"><label for="service-4-stars" class="star">&#9733;</label>
+                        <input type="radio" id="service-3-stars" name="bewertung_service" value="3"><label for="service-3-stars" class="star">&#9733;</label>
+                        <input type="radio" id="service-2-stars" name="bewertung_service" value="2"><label for="service-2-stars" class="star">&#9733;</label>
+                        <input type="radio" id="service-1-star" name="bewertung_service" value="1"><label for="service-1-star" class="star">&#9733;</label>
+                    </div>
+                </div>
+                <div>
+                    <label for="id_bewertung_essen" style="font-size: 18px;">Essenqualität</label><br>
+                    <div class="star-rating">
+                        <input type="radio" id="essen-5-stars" name="bewertung_essen" value="5"><label for="essen-5-stars" class="star">&#9733;</label>
+                        <input type="radio" id="essen-4-stars" name="bewertung_essen" value="4"><label for="essen-4-stars" class="star">&#9733;</label>
+                        <input type="radio" id="essen-3-stars" name="bewertung_essen" value="3"><label for="essen-3-stars" class="star">&#9733;</label>
+                        <input type="radio" id="essen-2-stars" name="bewertung_essen" value="2"><label for="essen-2-stars" class="star">&#9733;</label>
+                        <input type="radio" id="essen-1-star" name="bewertung_essen" value="1"><label for="essen-1-star" class="star">&#9733;</label>
+                    </div>
+                </div>
+                <div>
+                    <label for="id_bewertung_ambiente" style="font-size: 18px;">Ambiente</label><br>
+                    <div class="star-rating">
+                        <input type="radio" id="ambiente-5-stars" name="bewertung_ambiente" value="5"><label for="ambiente-5-stars" class="star">&#9733;</label>
+                        <input type="radio" id="ambiente-4-stars" name="bewertung_ambiente" value="4"><label for="ambiente-4-stars" class="star">&#9733;</label>
+                        <input type="radio" id="ambiente-3-stars" name="bewertung_ambiente" value="3"><label for="ambiente-3-stars" class="star">&#9733;</label>
+                        <input type="radio" id="ambiente-2-stars" name="bewertung_ambiente" value="2"><label for="ambiente-2-stars" class="star">&#9733;</label>
+                        <input type="radio" id="ambiente-1-star" name="bewertung_ambiente" value="1"><label for="ambiente-1-star" class="star">&#9733;</label>
+                    </div>
                 </div>
                 <div>
                     <label for="id_mit_wem" style="font-size: 18px;">Mit wem waren Sie hier?</label><br>
@@ -160,21 +192,17 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
-            const starRatingInputs = document.querySelectorAll('.star-rating input[type="radio"]');
-            const bewertungValue = document.getElementById('bewertungValue');
             const bewertungForm = document.getElementById('bewertungForm');
 
-            starRatingInputs.forEach(input => {
-                input.addEventListener('change', () => {
-                    bewertungValue.value = input.value;
-                });
-            });
-
             bewertungForm.addEventListener('submit', (event) => {
-                const checkedStar = document.querySelector('.star-rating input[type="radio"]:checked');
-                if (!checkedStar) {
+                const checkedOverall = document.querySelector('.star-rating input[name="bewertung_gesamt"]:checked');
+                const checkedService = document.querySelector('.star-rating input[name="bewertung_service"]:checked');
+                const checkedEssen = document.querySelector('.star-rating input[name="bewertung_essen"]:checked');
+                const checkedAmbiente = document.querySelector('.star-rating input[name="bewertung_ambiente"]:checked');
+                
+                if (!checkedOverall || !checkedService || !checkedEssen || !checkedAmbiente) {
                     event.preventDefault();
-                    alert('Bitte bewerten Sie Ihre Erfahrung.');
+                    alert('Bitte bewerten Sie alle Kategorien.');
                 }
             });
         });

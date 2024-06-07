@@ -32,6 +32,12 @@
         .star-rating .star {
             color: #FFD700;
             font-size: 25px;
+            position: relative;
+        }
+        .star-rating .star.half {
+            background: linear-gradient(90deg, #FFD700 50%, #ccc 50%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         .rating-value {
             margin-left: 10px;
@@ -103,14 +109,16 @@
         
         <!-- Durchschnittliche Bewertung -->
         <div class="star-rating">
-            {% for filled in sterne_bewertung %}
-                {% if filled %}
+            {% for i in "12345" %}
+                {% if i|add:0 <= volle_sterne %}
                     <span class="star">&#9733;</span>
+                {% elif halber_stern and i == volle_sterne|add:1 %}
+                    <span class="star half">&#9733;</span>
                 {% else %}
-                    <span class="star">&#9734;</span>
+                    <span class="star grey">&#9734;</span>
                 {% endif %}
             {% endfor %}
-            <span class="rating-value">{{ durchschnittliche_bewertung|floatformat:1 }}</span>
+            <span class="rating-value">{{ durchschnittliche_bewertung_gesamt|floatformat:1 }}</span>
             <span class="review-count">({{ anzahl_bewertungen }} Bewertungen)</span>
         </div>
 
@@ -118,7 +126,54 @@
             {% if bewertungen %}
                 {% for bewertung in bewertungen %}
                     <div class="review-item">
-                        <strong>{{ bewertung.bewertung }} Sterne</strong>
+                        <strong>Gesamterlebnis:</strong>
+                        <div class="review-stars">
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_gesamt %}
+                                    <span class="star">&#9733;</span>
+                                {% elif i == bewertung.bewertung_gesamt|add:0.5 %}
+                                    <span class="star half">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <strong>Service:</strong>
+                        <div class="review-stars">
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_service %}
+                                    <span class="star">&#9733;</span>
+                                {% elif i == bewertung.bewertung_service|add:0.5 %}
+                                    <span class="star half">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <strong>Essenqualität:</strong>
+                        <div class="review-stars">
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_essen %}
+                                    <span class="star">&#9733;</span>
+                                {% elif i == bewertung.bewertung_essen|add:0.5 %}
+                                    <span class="star half">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <strong>Ambiente:</strong>
+                        <div class="review-stars">
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_ambiente %}
+                                    <span class="star">&#9733;</span>
+                                {% elif i == bewertung.bewertung_ambiente|add:0.5 %}
+                                    <span class="star half">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
                         <p>Mit wem: {{ bewertung.get_mit_wem_display }}</p>
                         <p>Anlass: {{ bewertung.get_anlass_display }}</p>
                         <p>{{ bewertung.kommentar }}</p>

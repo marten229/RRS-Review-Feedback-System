@@ -12,9 +12,12 @@ class ReservationForm(forms.ModelForm):
 class BewertungForm(forms.ModelForm):
     class Meta:
         model = Bewertung
-        fields = ['bewertung', 'mit_wem', 'anlass', 'kommentar']
+        fields = ['bewertung_gesamt', 'bewertung_service', 'bewertung_essen', 'bewertung_ambiente', 'mit_wem', 'anlass', 'kommentar']
         widgets = {
-            'bewertung': forms.RadioSelect,
+            'bewertung_gesamt': forms.RadioSelect,
+            'bewertung_service': forms.RadioSelect,
+            'bewertung_essen': forms.RadioSelect,
+            'bewertung_ambiente': forms.RadioSelect,
             'mit_wem': forms.RadioSelect,
             'anlass': forms.Select,
             'kommentar': forms.Textarea(attrs={'rows': 5, 'cols': 40}),

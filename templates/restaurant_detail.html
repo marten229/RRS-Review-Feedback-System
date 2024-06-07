@@ -8,14 +8,22 @@
             font-family: Arial, sans-serif;
             line-height: 1.6;
             padding: 20px;
+            display: flex;
+            justify-content: center;
         }
         h1 {
             font-size: 2.5em;
             color: #333;
         }
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
+        }
+        .restaurant-info {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 40px;
         }
         .restaurant-info p {
             margin: 0;
@@ -29,7 +37,9 @@
             text-decoration: underline;
         }
         .bewertungen-section {
-            margin-top: 40px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
         }
         .bewertungen-section h2 {
             font-size: 2em;
@@ -43,6 +53,12 @@
         .star-rating .star {
             color: #FFD700;
             font-size: 25px;
+        }
+        .star-rating .star.half:before {
+            content: "\2605"; /* gefüllter Stern */
+            color: #FFD700;
+            position: absolute;
+            clip: rect(0px, 12.5px, 25px, 0px);
         }
         .rating-value {
             margin-left: 10px;
@@ -68,6 +84,7 @@
         .review-item .review-stars {
             display: flex;
             align-items: center;
+            margin-bottom: 5px;
         }
         .review-item .review-stars .star {
             color: #FFD700;
@@ -137,14 +154,18 @@
         <div class="bewertungen-section">
             <h2>Bewertungen</h2>
             <div class="star-rating">
-                {% for filled in sterne_bewertung %}
-                    {% if filled %}
-                        <span class="star">&#9733;</span>
-                    {% else %}
-                        <span class="star">&#9734;</span>
-                    {% endif %}
-                {% endfor %}
-                <span class="rating-value">{{ durchschnittliche_bewertung|floatformat:1 }}</span>
+                {% with durchschnittliche_bewertung_gesamt|floatformat:1 as rating %}
+                    {% for i in "12345" %}
+                        {% if i <= rating %}
+                            <span class="star">&#9733;</span>
+                        {% elif i == rating|floatformat:0 %}
+                            <span class="star half">&#9733;</span>
+                        {% else %}
+                            <span class="star">&#9734;</span>
+                        {% endif %}
+                    {% endfor %}
+                {% endwith %}
+                <span class="rating-value">{{ durchschnittliche_bewertung_gesamt|floatformat:1 }}</span>
                 <span class="review-count">({{ anzahl_bewertungen }} Bewertungen)</span>
             </div>
 
@@ -152,16 +173,51 @@
                 {% for bewertung in bewertungen|slice:":3" %}
                     <div class="review-item">
                         <div class="user-name">{{ bewertung.user.username }}</div>
+
                         <div class="review-stars">
+                            <strong>Gesamterlebnis:</strong>
                             {% for i in "12345" %}
-                                {% if i|add:0 <= bewertung.bewertung %}
+                                {% if i|add:0 <= bewertung.bewertung_gesamt %}
                                     <span class="star">&#9733;</span>
                                 {% else %}
                                     <span class="star grey">&#9734;</span>
                                 {% endif %}
                             {% endfor %}
-                            <span>{{ bewertung.bewertung }} Sterne</span>
                         </div>
+
+                        <div class="review-stars">
+                            <strong>Service:</strong>
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_service %}
+                                    <span class="star">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="review-stars">
+                            <strong>Essenqualität:</strong>
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_essen %}
+                                    <span class="star">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="review-stars">
+                            <strong>Ambiente:</strong>
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_ambiente %}
+                                    <span class="star">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
                         <p>{{ bewertung.kommentar }}</p>
                         <small>{{ bewertung.created_at }}</small>
                     </div>
@@ -171,16 +227,51 @@
                 {% for bewertung in bewertungen|slice:"3:" %}
                     <div class="review-item">
                         <div class="user-name">{{ bewertung.user.username }}</div>
+
                         <div class="review-stars">
+                            <strong>Gesamterlebnis:</strong>
                             {% for i in "12345" %}
-                                {% if i|add:0 <= bewertung.bewertung %}
+                                {% if i|add:0 <= bewertung.bewertung_gesamt %}
                                     <span class="star">&#9733;</span>
                                 {% else %}
                                     <span class="star grey">&#9734;</span>
                                 {% endif %}
                             {% endfor %}
-                            <span>{{ bewertung.bewertung }} Sterne</span>
                         </div>
+
+                        <div class="review-stars">
+                            <strong>Service:</strong>
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_service %}
+                                    <span class="star">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="review-stars">
+                            <strong>Essenqualität:</strong>
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_essen %}
+                                    <span class="star">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="review-stars">
+                            <strong>Ambiente:</strong>
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_ambiente %}
+                                    <span class="star">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
                         <p>{{ bewertung.kommentar }}</p>
                         <small>{{ bewertung.created_at }}</small>
                     </div>
