@@ -2,16 +2,21 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Bewertungen anzeigen</title>
+    <title>Bewertungen für {{ restaurant.name }}</title>
 </head>
 <body>
-    <h1>Bewertungen anzeigen</h1>
+    <h1>Bewertungen für {{ restaurant.name }}</h1>
     <ul>
         {% for bewertung in bewertungen %}
             <li>
                 Bewertung: {{ bewertung.bewertung }} <br>
                 Kommentar: {{ bewertung.kommentar }} <br>
-                Erstellt am: {{ bewertung.erstellt_am|date:"d.m.Y H:i:s" }} <br><br>
+                Erstellt am: {{ bewertung.created_at|date:"d.m.Y H:i:s" }} <br>
+                <form action="{% url 'bewertung-loeschen' bewertung.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Löschen</button>
+                </form>
+                <br><br>
             </li>
         {% endfor %}
     </ul>
