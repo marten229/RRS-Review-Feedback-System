@@ -35,7 +35,7 @@ class Reservation(models.Model):
     def __str__(self):
         return f"{self.name} - {self.datum} at {self.uhrzeit}"
     
-    ##Bewerungclass Bewertung(models.Model):
+##Bewerung
 class Bewertung(models.Model):
     BEWERTUNG_CHOICES = (
         (1, '1'),
@@ -45,8 +45,30 @@ class Bewertung(models.Model):
         (5, '5'),
     )
 
+    MIT_WEM_CHOICES = (
+        ('geschäftsreise', 'Geschäftsreise'),
+        ('als_paar', 'Als Paar'),
+        ('familie', 'Familie'),
+        ('mit_freunden', 'Mit Freunden'),
+        ('alleine', 'Alleine'),
+    )
+
+    ANLASS_CHOICES = (
+        ('frühstück', 'Frühstück'),
+        ('brunch', 'Brunch'),
+        ('mittagessen', 'Mittagessen'),
+        ('abendessen', 'Abendessen'),
+        ('dessert', 'Dessert'),
+        ('kaffee_oder_tee', 'Kaffee oder Tee'),
+    )
+
+    restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE, related_name='bewertungen')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bewertungen' , default=1)
     bewertung = models.PositiveSmallIntegerField(choices=BEWERTUNG_CHOICES, default=3)
+    mit_wem = models.CharField(max_length=20, choices=MIT_WEM_CHOICES)
+    anlass = models.CharField(max_length=20, choices=ANLASS_CHOICES)
     kommentar = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"Bewertung: {self.bewertung}"
+        return f"Bewertung für : {self.bewertung}"
