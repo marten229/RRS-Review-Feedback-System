@@ -105,7 +105,6 @@
 </head>
 <body>
     <div class="container">
-        <h1>Bewertungen für {{ restaurant.name }}</h1>
         
         <!-- Durchschnittliche Bewertung -->
         <div class="star-rating">
@@ -186,7 +185,6 @@
                 <p>Es gibt noch keine Bewertungen für dieses Restaurant.</p>
             {% endif %}
         </div>
-        <a href="{% url 'restaurant-detail' restaurant.pk %}" class="btn-back">Zurück zum Restaurant</a>
     </div>
 </body>
 </html>
