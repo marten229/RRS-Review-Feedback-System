@@ -3,6 +3,8 @@ from django.db.models import Avg, Count
 from django.views.generic import ListView, DetailView
 from .models import Restaurant, User, Bewertung
 from .forms import ReservationForm, BewertungForm
+from UserManagement.models import User
+from django.contrib.auth.decorators import login_required
 
 class RestaurantListView(ListView):
     model = Restaurant
@@ -62,15 +64,15 @@ def create_reservation(request, pk):
         form = ReservationForm()
     return render(request, 'create_reservation.html', {'form': form, 'restaurant': restaurant})
 
+@login_required
 def bewertung_abgeben(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
-    dummy_user, created = User.objects.get_or_create(username='dummy_user', defaults={'email': 'dummy@example.com', 'password': 'dummy_password'})
     if request.method == 'POST':
         form = BewertungForm(request.POST)
         if form.is_valid():
             bewertung = form.save(commit=False)
             bewertung.restaurant = restaurant
-            bewertung.user = dummy_user  # Dummy-Benutzer zuweisen
+            bewertung.user = request.user
             bewertung.save()
             return redirect('danke', pk=pk)
         else:
@@ -79,6 +81,7 @@ def bewertung_abgeben(request, pk):
         form = BewertungForm()
     return render(request, 'bewertung_formular.html', {'form': form, 'restaurant': restaurant})
 
+@login_required
 def danke(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
     return render(request, 'danke.html', {'restaurant': restaurant, 'restaurant_pk': pk})

@@ -7,6 +7,6 @@ urlpatterns = [
     path('restaurants/<int:pk>/reservation/', create_reservation, name='create-reservation'),
     path('restaurants/<int:pk>/bewertung/', bewertung_abgeben, name='create-bewertung'),
     path('restaurants/<int:pk>/danke/', danke, name='danke'),
-    path('restaurants/<int:pk>/bewertungen/', restaurant_bewertungen, name='restaurant-bewertungen'),
+    #path('restaurants/<int:pk>/bewertungen/', restaurant_bewertungen, name='restaurant-bewertungen'),
     path('restaurants/delete_bewertung/<int:bewertung_id>/', delete_bewertung, name='delete-bewertung'),
 ]
