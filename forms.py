@@ -1,5 +1,6 @@
 from django import forms
-from .models import Reservation, Bewertung
+from .models import Bewertung
+from ReservationManagement.models import Reservation
 
 class ReservationForm(forms.ModelForm):
     class Meta:
