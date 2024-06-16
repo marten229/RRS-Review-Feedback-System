@@ -5,6 +5,7 @@ from .models import Restaurant, User, Bewertung
 from .forms import ReservationForm, BewertungForm
 from UserManagement.models import User
 from django.contrib.auth.decorators import login_required
+from UserManagement.decorators import role_and_restaurant_required
 
 class RestaurantListView(ListView):
     model = Restaurant
@@ -86,6 +87,8 @@ def danke(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
     return render(request, 'danke.html', {'restaurant': restaurant, 'restaurant_pk': pk})
 
+@login_required
+@role_and_restaurant_required(['administrator', 'restaurant_owner', 'restaurant_staff'])
 def restaurant_bewertungen(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
     bewertungen = Bewertung.objects.filter(restaurant=restaurant)
