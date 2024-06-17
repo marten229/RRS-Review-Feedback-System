@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Bewertungen{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <!-- Durchschnittliche Bewertung -->
+        <div class="star-rating">
+            {% for i in "12345" %}
+                {% if i|add:0 <= volle_sterne %}
+                    <span class="star">&#9733;</span>
+                {% elif halber_stern and i == volle_sterne|add:1 %}
+                    <span class="star half">&#9733;</span>
+                {% else %}
+                    <span class="star grey">&#9734;</span>
+                {% endif %}
+            {% endfor %}
+            <span class="rating-value">{{ durchschnittliche_bewertung_gesamt|floatformat:1 }}</span>
+            <span class="review-count">({{ anzahl_bewertungen }} Bewertungen)</span>
+        </div>
+
+        <div class="bewertungen-section">
+            {% if bewertungen %}
+                {% for bewertung in bewertungen %}
+                    <div class="review-item">
+                        <strong>Gesamterlebnis:</strong>
+                        <div class="review-stars">
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_gesamt %}
+                                    <span class="star">&#9733;</span>
+                                {% elif i == bewertung.bewertung_gesamt|add:0.5 %}
+                                    <span class="star half">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <strong>Service:</strong>
+                        <div class="review-stars">
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_service %}
+                                    <span class="star">&#9733;</span>
+                                {% elif i == bewertung.bewertung_service|add:0.5 %}
+                                    <span class="star half">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <strong>Essenqualität:</strong>
+                        <div class="review-stars">
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_essen %}
+                                    <span class="star">&#9733;</span>
+                                {% elif i == bewertung.bewertung_essen|add:0.5 %}
+                                    <span class="star half">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <strong>Ambiente:</strong>
+                        <div class="review-stars">
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= bewertung.bewertung_ambiente %}
+                                    <span class="star">&#9733;</span>
+                                {% elif i == bewertung.bewertung_ambiente|add:0.5 %}
+                                    <span class="star half">&#9733;</span>
+                                {% else %}
+                                    <span class="star grey">&#9734;</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p>Mit wem: {{ bewertung.get_mit_wem_display }}</p>
+                        <p>Anlass: {{ bewertung.get_anlass_display }}</p>
+                        <p>{{ bewertung.kommentar }}</p>
+                        <p>Abgegeben von: {{ bewertung.user.username }}</p>
+                        <small>{% load tz %}{% localtime %}{{ bewertung.created_at|date:"d.m.Y H:i" }}{% endlocaltime %}</small>
+                        <button class="btn-delete" onclick="deleteReview({{ restaurant.id }}, {{ bewertung.id }})">Löschen</button>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Es gibt noch keine Bewertungen für dieses Restaurant.</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        padding: 20px;
+    }
+    h1 {
+        font-size: 2.5em;
+        color: #333;
+    }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .bewertungen-section {
+        margin-top: 40px;
+    }
+    .bewertungen-section h2 {
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+    .star-rating {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .star-rating .star {
+        color: #FFD700;
+        font-size: 25px;
+        position: relative;
+    }
+    .star-rating .star.half {
+        background: linear-gradient(90deg, #FFD700 50%, #ccc 50%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .rating-value {
+        margin-left: 10px;
+        font-size: 22px;
+        font-weight: bold;
+        color: #333;
+    }
+    .review-count {
+        margin-left: 10px;
+        font-size: 18px;
+        color: #555;
+    }
+    .review-item {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    .review-item strong {
+        display: block;
+        font-size: 1.2em;
+        color: #333;
+    }
+    .review-item p {
+        margin: 5px 0;
+        color: #333;
+    }
+    .review-item small {
+        color: #888;
+        display: block;
+        margin-top: 10px;
+    }
+    .btn-back, .btn-delete {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .btn-delete {
+        background-color: #dc3545;
+        margin-left: 10px;
+    }
+    .btn-back:hover {
+        background-color: #0056b3;
+    }
+    .btn-delete:hover {
+        background-color: #c82333;
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function deleteReview(pk, bewertung_id) {
+        if (confirm("Möchten Sie diese Bewertung wirklich löschen?")) {
+            var url = '/dashboard/' + pk + '/delete_bewertung/' + bewertung_id + '/';
+            window.location.href = url;
+        }
+    }
+</script>
+{% endblock %}
