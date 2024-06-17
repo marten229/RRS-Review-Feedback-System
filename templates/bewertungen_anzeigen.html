@@ -12,7 +12,7 @@
                 Bewertung: {{ bewertung.bewertung }} <br>
                 Kommentar: {{ bewertung.kommentar }} <br>
                 Erstellt am: {{ bewertung.created_at|date:"d.m.Y H:i:s" }} <br>
-                <form action="{% url 'bewertung-loeschen' bewertung.id %}" method="post" style="display:inline;">
+                <form action="{% url 'delete-bewertung' bewertung.id %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit">Löschen</button>
                 </form>

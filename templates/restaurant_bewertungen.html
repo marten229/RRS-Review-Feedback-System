@@ -76,7 +76,7 @@
                         <p>{{ bewertung.kommentar }}</p>
                         <p>Abgegeben von: {{ bewertung.user.username }}</p>
                         <small>{% load tz %}{% localtime %}{{ bewertung.created_at|date:"d.m.Y H:i" }}{% endlocaltime %}</small>
-                        <button class="btn-delete" onclick="deleteReview({{ bewertung.id }})">Löschen</button>
+                        <button class="btn-delete" onclick="deleteReview({{ restaurant.id }}, {{ bewertung.id }})">Löschen</button>
                     </div>
                 {% endfor %}
             {% else %}
@@ -183,9 +183,10 @@
 
 {% block extra_scripts %}
 <script>
-    function deleteReview(reviewId) {
+    function deleteReview(pk, bewertung_id) {
         if (confirm("Möchten Sie diese Bewertung wirklich löschen?")) {
-            window.location.href = `/reservation/restaurants/delete_bewertung/${reviewId}/`;
+            var url = '/dashboard/' + pk + '/delete_bewertung/' + bewertung_id + '/';
+            window.location.href = url;
         }
     }
 </script>
